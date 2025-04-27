@@ -11,6 +11,7 @@ spec:
   selector:
     matchLabels:
       {{- include "springboot-parameters.selectorLabels" . | nindent 6 }}
+      app: {{ .Chart.Name }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,6 +23,7 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        app: {{ .Chart.Name }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -40,29 +42,56 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+            - name: CONFIG_PATH
+              value: /config
+            - name: SECRET_CONFIG_PATH
+              value: /secret-config
+            - name: ENV_VAR1
+              valueFrom:
+                configMapKeyRef:
+                  name: cm-extra-config
+                  key: ENV_VAR1
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: cm-extra-env
+                  key: SERVER_PORT
+            - name: LOGGING_LEVEL_ROOT
+              valueFrom:
+                configMapKeyRef:
+                  name: cm-extra-env
+                  key: LOGGING_LEVEL_ROOT
+            - name: ENV_VAR4
+              valueFrom:
+                secretKeyRef:
+                  name: secret-extra-config
+                  key: ENV_VAR4
+            - name: ENV_VAR2
+              valueFrom:
+                secretKeyRef:
+                  name: secret-extra-env
+                  key: ENV_VAR2
+            - name: ENV_VAR3
+              valueFrom:
+                secretKeyRef:
+                  name: secret-extra-env
+                  key: ENV_VAR3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+            - name: secret-volume
+              mountPath: /secret-config
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: config-volume
+          configMap:
+            name: cm-extra-config
+        - name: secret-volume
+          secret:
+            secretName: secret-extra-config

@@ -45,7 +45,7 @@ service:
   port: 8080
 
 ingress:
-  enabled: false
+  enabled: true
   dnsWildcard: development.krci-dev.cloudmentor.academy
   className: ""
   annotations: {}
@@ -53,9 +53,9 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     # If need to use specific host, define host value below. By default when set 'edpDefault' FQDN: <CODEBASE_NAME>-<CODEBASE_NAMESPACE>.<CLUSTER_DNS_WILDCARD>
-    - host: edpDefault
+    - host: springboot-parameters-647f9884-parameters-dev.development.krci-dev.cloudmentor.academy
       paths:
-        - path: /
+        - path: /env
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
