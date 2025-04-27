@@ -25,11 +25,11 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className | default "" }}
   rules:
-    - host: {{ .Values.ingress.hosts[0].host | default "springboot-parameters-647f9884-parameters-dev.development.krci-dev.cloudmentor.academy" }}
+    - host: {{ (index .Values.ingress.hosts 0).host | default "springboot-parameters-647f9884-parameters-dev.development.krci-dev.cloudmentor.academy" }}
       http:
         paths:
-          - path: {{ .Values.ingress.hosts[0].paths[0].path | default "/env" }}
-            pathType: {{ .Values.ingress.hosts[0].paths[0].pathType | default "ImplementationSpecific" }}
+          - path: {{ (index .Values.ingress.hosts 0).paths | first | default (dict "path" "/env").path }}
+            pathType: {{ (index .Values.ingress.hosts 0).paths | first | default (dict "pathType" "ImplementationSpecific").pathType }}
             backend:
               service:
                 name: {{ $fullName }}
