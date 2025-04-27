@@ -80,7 +80,7 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /config
-            - name: secret-volume
+            - name: secret-config-volume
               mountPath: /secret-config
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
@@ -92,6 +92,12 @@ spec:
         - name: config-volume
           configMap:
             name: cm-extra-config
-        - name: secret-volume
+        - name: secret-config-volume
           secret:
             secretName: secret-extra-config
+        - name: env-config-volume
+          configMap:
+            name: cm-extra-env
+        - name: env-secret-volume
+          secret:
+            secretName: secret-extra-env
