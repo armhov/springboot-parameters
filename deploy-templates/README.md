@@ -34,8 +34,8 @@ A Helm chart for Kubernetes
 | ingress.className | string | `""` |  |
 | ingress.dnsWildcard | string | `"development.krci-dev.cloudmentor.academy"` |  |
 | ingress.enabled | bool | `true` |  |
-| ingress.hosts[0].host | string | `"springboot-parameters-647f9884-parameters-dev.development.krci-dev.cloudmentor.academy"` |  |
-| ingress.hosts[0].paths[0].path | string | `"/env"` |  |
+| ingress.hosts[0].host | string | `"edpDefault"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
 | ingress.tls | list | `[]` |  |
 | livenessProbe.tcpSocket.port | string | `"http"` |  |
