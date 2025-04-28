@@ -2,77 +2,63 @@ package com.epam.edp.demo.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-
+/**
+ * @author Pavlo_Yemelianov
+ */
 @RestController
 public class HelloEdpController {
 
-    @Value("${application.properties.path:/config/application.properties}")
-    private String configMapConfigPath;
+    // Значения из файла application.properties
+    @Value("${server.port}")
+    private String serverPort;
 
-    @Value("${application.secret.properties.path:/secret-config/application.secret.properties}")
-    private String secretConfigPath;
+    @Value("${logging.level.root}")
+    private String loggingLevelRoot;
 
-    @GetMapping("/env")
-    public Map<String, String> getEnv() {
-        Map<String, String> env = new HashMap<>();
+    // Значения из ConfigMap и Secret
+    @Value("${application.properties.from.configmap:}")
+    private String applicationPropertiesFromConfigMap;
 
-        // Read ConfigMap and Secret files for envFrom variables
-        Map<String, String> configMapData = readPropertiesFromFile(configMapConfigPath);
-        Map<String, String> secretData = readPropertiesFromFile(secretConfigPath);
+    @Value("${application.secret.properties.from.secret:}")
+    private String applicationSecretPropertiesFromSecret;
 
-        // Read environment variables from System.getenv()
-        System.getenv().forEach((key, value) -> {
-            if (configMapData.containsKey(key) || secretData.containsKey(key)) {
-                env.put(key, value);
-            } else {
-                env.put(key, value);
-            }
-        });
-
-        // Add custom.config from ConfigMap
-        addConfigFileToEnv(env, configMapConfigPath, "application.properties.from.configmap");
-
-        // Add custom.config from Secret
-        addConfigFileToEnv(env, secretConfigPath, "application.secret.properties.from.secret");
-
-        return env;
+    @GetMapping(value = "/api/hello")
+    public String hello() {
+        return "Hello, EDP!";
     }
+    
+    @GetMapping(value = "/env")
+    @ResponseBody
+    public Map<String, Object> env() {
+        List<String> requiredKeys = List.of(
+                "ENV_VAR1",
+                "ENV_VAR2",
+                "ENV_VAR3",
+                "ENV_VAR4",
+                "ENV_VAR5",
+                "SPRING_PROFILES_ACTIVE"
+        );
 
-    private Map<String, String> readPropertiesFromFile(String filePath) {
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
-            String[] lines = fileContent.split("\\r?\\n");
-            Map<String, String> properties = new HashMap<>();
-            for (String line : lines) {
-                String[] parts = line.split("=", 2);
-                if (parts.length == 2) {
-                    String key = parts[0].trim();
-                    String value = parts[1].trim();
-                    properties.put(key, value);
-                }
-            }
-            return properties;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HashMap<>();
-        }
-    }
+        Map<String, Object> filteredEnv = System.getenv().entrySet().stream()
+                .filter(entry -> requiredKeys.contains(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, HashMap::new));
 
-    private void addConfigFileToEnv(Map<String, String> env, String filePath, String envKey) {
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
-            env.put(envKey, fileContent);
-        } catch (IOException e) {
-            env.put(envKey, "File not found or unreadable");
-        }
+        filteredEnv.put("server.port", serverPort);
+        filteredEnv.put("logging.level.root", loggingLevelRoot);
+
+        filteredEnv.put("application.properties.from.configmap",
+                applicationPropertiesFromConfigMap.isEmpty() ? "Not configured" : applicationPropertiesFromConfigMap);
+        filteredEnv.put("application.secret.properties.from.secret",
+                applicationSecretPropertiesFromSecret.isEmpty() ? "Not configured" : applicationSecretPropertiesFromSecret);
+
+        return filteredEnv;
     }
 }
-

@@ -50,40 +50,16 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: dev
-            # - name: CONFIG_PATH
-            #   value: /config
-            # - name: SECRET_CONFIG_PATH
-            #   value: /secret-config
             - name: ENV_VAR1
               valueFrom:
                 configMapKeyRef:
                   name: cm-extra-config
                   key: ENV_VAR1
-            # - name: SERVER_PORT
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: cm-extra-env
-            #       key: SERVER_PORT
-            # - name: LOGGING_LEVEL_ROOT
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: cm-extra-env
-            #       key: LOGGING_LEVEL_ROOT
             - name: ENV_VAR4
               valueFrom:
                 secretKeyRef:
                   name: secret-extra-config
                   key: ENV_VAR4
-            # - name: ENV_VAR2
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: secret-extra-env
-            #       key: ENV_VAR2
-            # - name: ENV_VAR3
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: secret-extra-env
-            #       key: ENV_VAR3
           volumeMounts:
             - name: configmap-volume
               readOnly: true
