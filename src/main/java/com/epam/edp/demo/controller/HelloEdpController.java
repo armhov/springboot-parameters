@@ -12,7 +12,7 @@ import java.util.Map;
 
 
 @RestController
-public class EnvController {
+public class HelloEdpController {
 
     @Value("${application.properties.path:/config/application.properties}")
     private String configMapConfigPath;
