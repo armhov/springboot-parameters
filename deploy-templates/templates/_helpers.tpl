@@ -53,9 +53,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "springboot-parameters.serviceAccountName" -}}
+{{- define "externalsecrets-aws.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "springboot-parameters.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "externalsecrets-aws.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
