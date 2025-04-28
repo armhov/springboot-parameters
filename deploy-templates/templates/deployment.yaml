@@ -85,7 +85,7 @@ spec:
       volumes:
         - name: ps-volume
           secret:
-            name: springboot-parameters
+            secretName: springboot-parameters
             items:
               - key: application.secret.properties.from.ps
                 path: application.secret.properties.from.ps
