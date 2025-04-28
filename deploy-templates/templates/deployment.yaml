@@ -48,6 +48,11 @@ spec:
             - secretRef:
                 name: secret-extra-env
           env:
+            - name: ENV_VAR5
+              valueFrom:
+                secretKeyRef:
+                  name: springboot-parameters
+                  key: ENV_VAR5
             - name: SPRING_PROFILES_ACTIVE
               value: dev
             - name: ENV_VAR1
@@ -61,6 +66,9 @@ spec:
                   name: secret-extra-config
                   key: ENV_VAR4
           volumeMounts:
+            - name: ps-volume
+              readOnly: true
+              mountPath: /ps-config
             - name: configmap-volume
               readOnly: true
               mountPath: /config
@@ -75,6 +83,12 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+        - name: ps-volume
+          secret:
+            name: springboot-parameters
+            items:
+              - key: application.secret.properties.from.ps
+                path: application.secret.properties.from.ps
         - name: configmap-volume
           configMap:
             name: cm-extra-config
