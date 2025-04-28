@@ -24,7 +24,7 @@ metadata:
   {{- end }}
 spec:
   rules:
-    - host: springboot-expose-advanced-647f9884-expose-advanced-dev.development.krci-dev.cloudmentor.academy
+    - host: springboot-parameters-647f9884-parameters-dev.development.krci-dev.cloudmentor.academy
       http:
         paths:
           - path: /env
