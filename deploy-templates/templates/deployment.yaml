@@ -29,7 +29,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "springboot-parameters.serviceAccountName" . }}
+      serviceAccountName: externalsecrets-aws
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
